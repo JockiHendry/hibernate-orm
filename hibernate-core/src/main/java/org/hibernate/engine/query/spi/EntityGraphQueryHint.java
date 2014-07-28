@@ -96,52 +96,51 @@ public class EntityGraphQueryHint {
 
 			try {
 				FromElement fromElement = null;
-				if ( !explicitFetches.containsKey( role ) ) {
-					if ( propertyType.isEntityType() ) {
-						final EntityType entityType = (EntityType) propertyType;
 
-						final String[] columns = origin.toColumns( originTableAlias, attributeName, false );
-						final String tableAlias = walker.getAliasGenerator().createName(
-								entityType.getAssociatedEntityName()
-						);
+                if ( propertyType.isEntityType() ) {
+                    final EntityType entityType = (EntityType) propertyType;
 
-						final FromElementFactory fromElementFactory = new FromElementFactory(
-								fromClause, origin,
-								attributeName, classAlias, columns, false
-						);
-						final JoinSequence joinSequence = walker.getSessionFactoryHelper().createJoinSequence(
-								false, entityType, tableAlias, JoinType.LEFT_OUTER_JOIN, columns
-						);
-						fromElement = fromElementFactory.createEntityJoin(
-								entityType.getAssociatedEntityName(),
-								tableAlias,
-								joinSequence,
-								true,
-								walker.isInFrom(),
-								entityType,
-								role,
-								null
-						);
-					}
-					else if ( propertyType.isCollectionType() ) {
-						CollectionType collectionType = (CollectionType) propertyType;
-						final String[] columns = origin.toColumns( originTableAlias, attributeName, false );
+                    final String[] columns = origin.toColumns( originTableAlias, attributeName, false );
+                    final String tableAlias = walker.getAliasGenerator().createName(
+                        entityType.getAssociatedEntityName()
+                    );
 
-						final FromElementFactory fromElementFactory = new FromElementFactory(
-								fromClause, origin,
-								attributeName, classAlias, columns, false
-						);
-						final QueryableCollection queryableCollection = walker.getSessionFactoryHelper()
-								.requireQueryableCollection( collectionType.getRole() );
-						fromElement = fromElementFactory.createCollection(
-								queryableCollection, collectionType.getRole(), JoinType.LEFT_OUTER_JOIN, true, false
-						);
-					}
-				}
+                    final FromElementFactory fromElementFactory = new FromElementFactory(
+                        fromClause, origin,
+                        attributeName, classAlias, columns, false
+                    );
+                    final JoinSequence joinSequence = walker.getSessionFactoryHelper().createJoinSequence(
+                        false, entityType, tableAlias, JoinType.LEFT_OUTER_JOIN, columns
+                    );
+                    fromElement = fromElementFactory.createEntityJoin(
+                        entityType.getAssociatedEntityName(),
+                        tableAlias,
+                        joinSequence,
+                        true,
+                        walker.isInFrom(),
+                        entityType,
+                        role,
+                        null
+                    );
+                    fromElements.add( fromElement );
+                }
+                else if ( propertyType.isCollectionType() ) {
+                    CollectionType collectionType = (CollectionType) propertyType;
+                    final String[] columns = origin.toColumns( originTableAlias, attributeName, false );
+
+                    final FromElementFactory fromElementFactory = new FromElementFactory(
+                        fromClause, origin,
+                        attributeName, classAlias, columns, false
+                    );
+                    final QueryableCollection queryableCollection = walker.getSessionFactoryHelper()
+                        .requireQueryableCollection( collectionType.getRole() );
+                    fromElement = fromElementFactory.createCollection(
+                        queryableCollection, collectionType.getRole(), JoinType.LEFT_OUTER_JOIN, true, false
+                    );
+                    fromElements.add( fromElement );
+                }
 
 				if ( fromElement != null ) {
-					fromElements.add( fromElement );
-
 					// recurse into subgraphs
 					for ( Subgraph<?> subgraph : attributeNode.getSubgraphs().values() ) {
 						fromElements.addAll(
