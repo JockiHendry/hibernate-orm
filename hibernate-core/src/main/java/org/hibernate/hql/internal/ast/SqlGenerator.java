@@ -387,7 +387,11 @@ public class SqlGenerator extends SqlGeneratorBase implements ErrorReporter {
 		}
 		else {
 			// these are just two unrelated table references
-			writeCrossJoinSeparator();
+            if (right.isEntity()) {
+                writeCrossJoinSeparator();
+            } else {
+                out(" ");
+            }
 		}
 	}
 
