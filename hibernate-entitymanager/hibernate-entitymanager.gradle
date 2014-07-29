@@ -109,3 +109,5 @@ configurations {
 artifacts {
     tests testJar
 }
+
+group = 'jockihendry'
