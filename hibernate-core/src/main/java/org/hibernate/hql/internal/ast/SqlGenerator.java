@@ -387,7 +387,7 @@ public class SqlGenerator extends SqlGeneratorBase implements ErrorReporter {
 		}
 		else {
 			// these are just two unrelated table references
-            if (right.isEntity()) {
+            if (right.isEntity() && (right.getType() != SqlTokenTypes.JOIN_FRAGMENT)) {
                 writeCrossJoinSeparator();
             } else {
                 out(" ");
